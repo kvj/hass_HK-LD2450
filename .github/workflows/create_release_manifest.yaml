@@ -2,7 +2,7 @@ name: create-release-from-manifest
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "custom_components/*/manifest.json"
 permissions:
