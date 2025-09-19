@@ -1,0 +1,72 @@
+{
+  "title": "HKL-LD2450 Room Presense",
+  "config": {
+    "step": {
+      "user": {
+        "title": "New Configuration",
+        "data": {
+          "name": "Name",
+          "device_id": "ESPHome Device",
+          "x": "X",
+          "y": "Y",
+          "width": "Width",
+          "height": "Height",
+          "angle": "Angle",
+          "occupancy_fade": "Reset occupancy after"
+        }
+      }
+    },
+    "error": {
+    }
+  },
+  "issues": {
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Update Configuration",
+        "data": {
+          "device_id": "ESPHome Device",
+          "x": "X",
+          "y": "Y",
+          "width": "Width",
+          "height": "Height",
+          "angle": "Angle",
+          "occupancy_fade": "Reset occupancy after"
+        }
+      }
+    },
+    "error": {
+    }
+  },
+  "config_subentries": {
+    "zone": {
+      "initiate_flow": {
+        "user": "Add Zone",
+        "reconfigure": "Update Zone"
+      },
+      "entry_type": "Room Zone",
+      "step": {
+        "user": {
+          "title": "New Room Zone",
+          "name": "Name",
+          "icon": "Icon",
+          "x": "X",
+          "y": "Y",
+          "width": "Width",
+          "height": "Height",
+          "occupancy_fade": "Reset occupancy after"
+        },
+        "reconfigure": {
+          "title": "Update Room Zone",
+          "icon": "Icon",
+          "x": "X",
+          "y": "Y",
+          "width": "Width",
+          "height": "Height",
+          "occupancy_fade": "Reset occupancy after"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "domain": "hk_ld2450",
+  "name": "HKL-LD2450 Room Presense",
+  "documentation": "https://github.com/kvj/hass_HK-LD2450",
+  "issue_tracker": "https://github.com/kvj/hass_HK-LD2450/issues",
+  "dependencies": ["esphome"],
+  "codeowners": ["@kvj"],
+  "requirements": ["Pillow>=11.3.0"],
+  "iot_class": "local_polling",
+  "config_flow": true,
+  "version": "0.1.0"
+}

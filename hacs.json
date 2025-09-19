@@ -1,0 +1,5 @@
+{
+    "name": "HKL-LD2450 Room Presense",
+    "domains": ["binary_sensor", "picture"],
+    "render_readme": true
+}
