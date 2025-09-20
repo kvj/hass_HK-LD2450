@@ -29,15 +29,18 @@ async def _create_config_schema(user_input: dict):
         vol.Required(CONF_NAME, default=user_input.get(CONF_NAME)): selector({"text": {}}),
     }).extend((await _create_options_schema(user_input)).schema)
 
+SIZE_SELECTOR = {"number": {"min": 0, "max": 9999, "mode": "box"}}
+FADE_SELECTOR = {"number": {"min": 0, "max": 3600, "unit_of_measurement": "seconds"}}
+
 async def _create_options_schema(user_input: dict):
     return vol.Schema({
         vol.Required(CONF_DEVICE_ID, default=user_input.get(CONF_DEVICE_ID)): selector({"device": {"integration": "esphome"}}),        
-        vol.Required(CONF_W, default=user_input.get(CONF_W, 300)): selector({"number": {"min": 0, "max": 9999}}),
-        vol.Required(CONF_H, default=user_input.get(CONF_H, 300)): selector({"number": {"min": 0, "max": 9999}}),
-        vol.Required(CONF_X, default=user_input.get(CONF_X, 0)): selector({"number": {"min": 0, "max": 9999}}),
-        vol.Required(CONF_Y, default=user_input.get(CONF_Y, 0)): selector({"number": {"min": 0, "max": 9999}}),
-        vol.Required(CONF_ANGLE, default=user_input.get(CONF_ANGLE, 0)): selector({"number": {"min": 0, "max": 360}}),
-        vol.Required(CONF_OCCUPANCY_FADE, default=user_input.get(CONF_OCCUPANCY_FADE, CONF_OCCUPANCY_FADE_DEF)): selector({"number": {"min": 0, "max": 360}}),
+        vol.Required(CONF_W, default=user_input.get(CONF_W, 300)): selector(SIZE_SELECTOR),
+        vol.Required(CONF_H, default=user_input.get(CONF_H, 300)): selector(SIZE_SELECTOR),
+        vol.Required(CONF_X, default=user_input.get(CONF_X, 0)): selector(SIZE_SELECTOR),
+        vol.Required(CONF_Y, default=user_input.get(CONF_Y, 0)): selector(SIZE_SELECTOR),
+        vol.Required(CONF_ANGLE, default=user_input.get(CONF_ANGLE, 0)): selector({"number": {"min": 0, "max": 360, "unit_of_measurement": "degrees"}}),
+        vol.Required(CONF_OCCUPANCY_FADE, default=user_input.get(CONF_OCCUPANCY_FADE, CONF_OCCUPANCY_FADE_DEF)): selector(FADE_SELECTOR),
     })
 
 async def _create_zone_config_schema(user_input: dict, zone_type: str):
@@ -48,11 +51,21 @@ async def _create_zone_config_schema(user_input: dict, zone_type: str):
 async def _create_zone_options_schema(user_input: dict, zone_type: str):
     return vol.Schema({
         vol.Required(CONF_ICON, default=user_input.get(CONF_ICON, CONF_ICON_DEF)): selector({"icon": {}}),
-        vol.Required(CONF_X, default=user_input.get(CONF_X, 0)): selector({"number": {"min": 0, "max": 9999}}),
-        vol.Required(CONF_Y, default=user_input.get(CONF_Y, 0)): selector({"number": {"min": 0, "max": 9999}}),
-        vol.Required(CONF_W, default=user_input.get(CONF_W, 300)): selector({"number": {"min": 0, "max": 9999}}),
-        vol.Required(CONF_H, default=user_input.get(CONF_H, 300)): selector({"number": {"min": 0, "max": 9999}}),
-        vol.Required(CONF_OCCUPANCY_FADE, default=user_input.get(CONF_OCCUPANCY_FADE, CONF_OCCUPANCY_FADE_DEF)): selector({"number": {"min": 0, "max": 360}}),
+        vol.Required(CONF_ZONE_TYPE, default=user_input.get(CONF_ZONE_TYPE, CONF_ZONE_TYPE_DEF)): selector({
+            "select": {"options": [{
+                "value": "normal", "label": "Normal",
+            }, {
+                "value": "exit", "label": "Exit",
+            }, {
+                "value": "ignore", "label": "Ignore",
+            }], "mode": "dropdown"}
+        }),
+        vol.Optional(CONF_ZONE_ID, default=user_input.get(CONF_ZONE_ID)): selector({"text": {}}),
+        vol.Required(CONF_X, default=user_input.get(CONF_X, 0)): selector(SIZE_SELECTOR),
+        vol.Required(CONF_Y, default=user_input.get(CONF_Y, 0)): selector(SIZE_SELECTOR),
+        vol.Required(CONF_W, default=user_input.get(CONF_W, 300)): selector(SIZE_SELECTOR),
+        vol.Required(CONF_H, default=user_input.get(CONF_H, 300)): selector(SIZE_SELECTOR),
+        vol.Required(CONF_OCCUPANCY_FADE, default=user_input.get(CONF_OCCUPANCY_FADE, CONF_OCCUPANCY_FADE_DEF)): selector(FADE_SELECTOR),
     })
 
 class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -89,6 +102,3 @@ class ZoneConfigFlowHandler(config_entries.ConfigSubentryFlow):
         if user_input is not None:
             return self.async_update_and_abort(self._get_entry(), self._get_reconfigure_subentry(), data=user_input)
         return self.async_show_form(step_id="reconfigure", data_schema=await _create_zone_options_schema(self._get_reconfigure_subentry().as_dict()["data"], self._subentry_type))
-    
-    def async_get_options_flow(config_entry: config_entries.ConfigEntry):
-        return OptionsFlowHandler()

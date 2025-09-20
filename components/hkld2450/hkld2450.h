@@ -30,6 +30,7 @@ class HKLD2450 : public esphome::PollingComponent, public esphome::uart::UARTDev
 
         esphome::api::APIServer* api_server_ = 0;
         bool bluetooth_ = false;
+        bool invert_x_ = false;
 
         int16_t x_[3] = {0, 0, 0};
         int16_t y_[3] = {0, 0, 0};
@@ -52,6 +53,7 @@ class HKLD2450 : public esphome::PollingComponent, public esphome::uart::UARTDev
 
         void set_api_server(esphome::api::APIServer* api_server) { this->api_server_ = api_server; }
         void set_bluetooth(bool value) { this->bluetooth_ = value; }
+        void set_invert_x(bool value) { this->invert_x_ = value; }
 
         void service_set_layout(int x, int y, int w, int h, int a);
         void service_add_zone(int x, int y, int w, int h, int f, int id);

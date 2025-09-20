@@ -60,7 +60,7 @@ class Coordinator(DataUpdateCoordinator):
 
     async def _async_setup(self):
         self._mdi_font = GlyphProvider()
-        self._mdi_font.init()
+        await self.hass.async_add_executor_job(self._mdi_font.init)
 
     async def _async_update(self):
         return {
@@ -111,7 +111,7 @@ class Coordinator(DataUpdateCoordinator):
                 "y": self._dimension_to_mm(conf.get(CONF_Y, 0)),
                 "w": self._dimension_to_mm(conf.get(CONF_W, 0)),
                 "h": self._dimension_to_mm(conf.get(CONF_H, 0)),
-                "f": 0,
+                "f": ZONE_TYPE_IDS[conf.get(CONF_ZONE_TYPE, CONF_ZONE_TYPE_DEF)],
                 "id": index,
             })
     
@@ -149,6 +149,10 @@ class Coordinator(DataUpdateCoordinator):
     def subentry_config(self, id: str) -> dict:
         return self._subentries.get(id, {})
 
+    def subentry_config_by_index(self, index: int) -> dict:
+        return self.subentry_config(self._subentries_map.get(index))
+
+
     def load_options(self):
         self._config = {
             **self._entry.as_dict()["options"],
@@ -177,6 +181,11 @@ class Coordinator(DataUpdateCoordinator):
             p = self._targets[i]
             if t[0] != -1:
                 # Real coordinates
+                if t[0] > 0 and self.subentry_config_by_index(t[0]).get(CONF_ZONE_TYPE) == "ignore":
+                    # Into ignore zone
+                    self._targets[i] = (-1, 0, 0, 0, None)
+                    changed = True
+                    continue
                 if p[1] != t[1] or p[2] != t[2] or t[3] != p[3]:
                     # Target moved
                     self._targets[i] = (t[0], t[1], t[2], t[3], datetime.now())

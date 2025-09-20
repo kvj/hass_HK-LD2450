@@ -51,6 +51,8 @@
           "title": "New Room Zone",
           "name": "Name",
           "icon": "Icon",
+          "id": "ID",
+          "zone_type": "Type",
           "x": "X",
           "y": "Y",
           "width": "Width",
@@ -60,6 +62,8 @@
         "reconfigure": {
           "title": "Update Room Zone",
           "icon": "Icon",
+          "id": "ID",
+          "zone_type": "Type",
           "x": "X",
           "y": "Y",
           "width": "Width",

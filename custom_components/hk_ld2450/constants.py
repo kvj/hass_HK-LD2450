@@ -12,6 +12,12 @@ CONF_ICON_DEF = "mdi:texture-box"
 CONF_OCCUPANCY_FADE = "occupancy_fade"
 CONF_OCCUPANCY_FADE_DEF = 60
 
+CONF_ZONE_TYPE = "zone_type"
+CONF_ZONE_TYPE_DEF = "normal"
+ZONE_TYPE_IDS = {"normal": 0, "exit": 1, "ignore": 2}
+
+CONF_ZONE_ID = "id"
+
 CONF_ROOM_COLOR = "room_color"
 CONF_ROOM_COLOR_DEF = "#aaaaaa"
 

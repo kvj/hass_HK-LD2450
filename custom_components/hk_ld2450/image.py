@@ -67,6 +67,39 @@ class _Entity(BaseEntity, ImageEntity):
             int(pa_size + h * scale),
         ), r_size, room_col)
 
+        zone_col = ImageColor.getrgb(self.coordinator._platform_config().get(CONF_ZONE_COLOR, CONF_ZONE_COLOR_DEF))        
+        icon_col = ImageColor.getrgb(self.coordinator._platform_config().get(CONF_ICON_COLOR, CONF_ICON_COLOR_DEF))        
+        icon_size = self.coordinator._platform_config().get(CONF_ICON_SIZE, CONF_ICON_SIZE_DEF)
+        for id, zone in self.coordinator._subentries.items():
+            z_type = zone.get(CONF_ZONE_TYPE)
+            zx  = self.coordinator._dimension_to_mm(zone.get(CONF_X, 0))
+            zy  = self.coordinator._dimension_to_mm(zone.get(CONF_Y, 0))
+            zw  = self.coordinator._dimension_to_mm(zone.get(CONF_W, 0))
+            zh  = self.coordinator._dimension_to_mm(zone.get(CONF_H, 0))
+            icon = zone.get(CONF_ICON, CONF_ICON_DEF)
+
+            if z_type == "ignore":
+                draw.rounded_rectangle((
+                    int(pa_size + zx * scale + b_size), 
+                    int(pa_size + (h - zy - zh) * scale + b_size), 
+                    int(pa_size + (zx + zw) * scale - b_size), 
+                    int(pa_size + (h - zy) * scale - b_size), 
+                ), r_size, None, zone_col, b_size)
+            else:
+                draw.rounded_rectangle((
+                    int(pa_size + zx * scale + b_size), 
+                    int(pa_size + (h - zy - zh) * scale + b_size), 
+                    int(pa_size + (zx + zw) * scale - b_size), 
+                    int(pa_size + (h - zy) * scale - b_size), 
+                ), r_size, zone_col, None)
+
+                self.coordinator._mdi_font.draw_icon(
+                    draw, icon, icon_size, 
+                    int(pa_size + (zx + zw / 2) * scale),
+                    int(pa_size + (h - zy - zh / 2) * scale),
+                    icon_col,
+                )
+
         sensor_col = ImageColor.getrgb(self.coordinator._platform_config().get(CONF_SENSOR_COLOR, CONF_SENSOR_COLOR_DEF))
         s_size = self.coordinator._platform_config().get(CONF_SENSOR_SIZE, CONF_SENSOR_SIZE_DEF)
         draw.pieslice((
@@ -75,30 +108,6 @@ class _Entity(BaseEntity, ImageEntity):
             int(pa_size + (x * scale) + s_size), 
             int(pa_size + ((h - y) * scale) + s_size),
         ), 180 + a - 60, 180 + a + 60, opa_color(sensor_col), sensor_col, b_size)
-
-        zone_col = ImageColor.getrgb(self.coordinator._platform_config().get(CONF_ZONE_COLOR, CONF_ZONE_COLOR_DEF))        
-        icon_col = ImageColor.getrgb(self.coordinator._platform_config().get(CONF_ICON_COLOR, CONF_ICON_COLOR_DEF))        
-        icon_size = self.coordinator._platform_config().get(CONF_ICON_SIZE, CONF_ICON_SIZE_DEF)
-        for id, zone in self.coordinator._subentries.items():
-            zx  = self.coordinator._dimension_to_mm(zone.get(CONF_X, 0))
-            zy  = self.coordinator._dimension_to_mm(zone.get(CONF_Y, 0))
-            zw  = self.coordinator._dimension_to_mm(zone.get(CONF_W, 0))
-            zh  = self.coordinator._dimension_to_mm(zone.get(CONF_H, 0))
-            icon = zone.get(CONF_ICON, CONF_ICON_DEF)
-
-            draw.rounded_rectangle((
-                int(pa_size + zx * scale), 
-                int(pa_size + (h - zy - zh) * scale), 
-                int(pa_size + (zx + zw) * scale), 
-                int(pa_size + (h - zy) * scale), 
-            ), r_size, zone_col, None)
-
-            self.coordinator._mdi_font.draw_icon(
-                draw, icon, icon_size, 
-                int(pa_size + (zx + zw / 2) * scale),
-                int(pa_size + (h - zy - zh / 2) * scale),
-                icon_col,
-            )
 
         p_col = ImageColor.getrgb(self.coordinator._platform_config().get(CONF_PERSON_COLOR, CONF_PERSON_COLOR_DEF))        
         for t in self.coordinator.data["targets"]:

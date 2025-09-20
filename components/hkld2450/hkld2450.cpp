@@ -72,6 +72,7 @@ void HKLD2450::parse_frame(const uint8_t *b) {
             return (v & 0x8000)? int16_t(v & 0x7FFF): -int16_t(v & 0x7FFF);
         };
         int16_t x_mm = to_s(raw16(0));
+        if (this->invert_x_) x_mm = - x_mm;
         int16_t y_mm = to_s(raw16(2));
         int8_t old_zone = this->zone_[t];
         int8_t zone = -1; // Out of zone
