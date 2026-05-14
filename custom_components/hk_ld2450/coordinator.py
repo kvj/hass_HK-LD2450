@@ -78,16 +78,16 @@ class Coordinator(DataUpdateCoordinator):
             new_state["ts"] = datetime.now().timestamp()
         self.async_set_updated_data(new_state)
 
-    def call_device_service(self, name: str, data: dict) -> bool:
+    async def async_call_device_service(self, name: str, data: dict) -> bool:
         if not self.is_device_connected():
-            _LOGGER.warning(f"call_device_service: not connected")
+            _LOGGER.warning(f"async_call_device_service: not connected")
             return False
         for _, service in self._entry_data.services.items():
             if service.name == name:
-                _LOGGER.debug(f"call_device_service: call service {name} with {data}, spec: {service}")
-                self._entry_data.client.execute_service(service, data)
+                _LOGGER.debug(f"async_call_device_service: call service {name} with {data}, spec: {service}")
+                await self._entry_data.client.execute_service(service, data)
                 return True
-        _LOGGER.warning(f"call_device_service: service not found: {name}")
+        _LOGGER.warning(f"async_call_device_service: service not found: {name}")
         return False
     
     def _dimension_to_mm(self, value: float) -> int:
@@ -97,7 +97,7 @@ class Coordinator(DataUpdateCoordinator):
         return self.hass.data[DOMAIN]
 
     async def async_send_configuration(self):
-        self.call_device_service("set_layout", {
+        await self.async_call_device_service("set_layout", {
             "x": self._dimension_to_mm(self._config.get(CONF_X, 0)),
             "y": self._dimension_to_mm(self._config.get(CONF_Y, 0)),
             "w": self._dimension_to_mm(self._config.get(CONF_W, 0)),
@@ -106,7 +106,7 @@ class Coordinator(DataUpdateCoordinator):
         })
         for index, id in self._subentries_map.items():
             conf = self._subentries[id]
-            self.call_device_service("add_zone", {
+            await self.async_call_device_service("add_zone", {
                 "x": self._dimension_to_mm(conf.get(CONF_X, 0)),
                 "y": self._dimension_to_mm(conf.get(CONF_Y, 0)),
                 "w": self._dimension_to_mm(conf.get(CONF_W, 0)),
